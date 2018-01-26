@@ -1,7 +1,6 @@
 # Animals-with-Attributes
 Project for Data mining lecture
 Dataset and classification method from
-Attribute based classification and the data is described in:
 
 [1] C. H. Lampert, H. Nickisch, and S. Harmeling. "Learning To Detect Unseen Object Classes by Between-Class Attribute Transfer". In CVPR, 2009 (pdf)
 

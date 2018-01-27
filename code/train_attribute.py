@@ -12,6 +12,7 @@ Animals with Attributes Dataset, http://attributes.kyb.tuebingen.mpg.de
 
 import numpy as np
 from sklearn.svm import SVC
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics.pairwise import chi2_kernel
 import collect_data as cd
 
@@ -24,6 +25,7 @@ def bzPickle(obj,filename):
     f.close()
 
 outputSVM_pattern =  './results/%s-SVM.pic.bz2'
+outputLogReg_pattern =  './results/%s-LogReg.pic.bz2'
 
 gamma = np.ones(6)  
 
@@ -44,7 +46,7 @@ def statKernel(x1, x2):
 
     return np.sum(kernels)
 
-def trainAttribute(attributeId):
+def trainSVM(attributeId):
     data, labels = cd.createData(cd.train_classes, attributeId)
     trainData = cd.flattenDataSet(data)
     
@@ -54,3 +56,12 @@ def trainAttribute(attributeId):
     filename = outputSVM_pattern % cd.attributenames[attributeId]
     bzPickle(svm, filename)
     
+def trainLogReg(attributeId):
+    data, labels = cd.createData(cd.train_classes, attributeId)
+    trainData = cd.flattenDataSet(data)
+    
+    logreg = LogisticRegression('l2', C=10., solver='saga')
+    logreg.fit(trainData, labels)
+
+    filename = outputLogReg_pattern % cd.attributenames[attributeId]
+    bzPickle(logreg, filename)

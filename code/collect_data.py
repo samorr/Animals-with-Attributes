@@ -26,7 +26,8 @@ def bzUnpickle(filename):
 
 # adapt these paths and filenames to match local installation
 
-local_path = '/home/dominik/Dokumenty/Studia/Data-mining/Animals-with-Attributes/'
+# local_path = '/home/dominik/Dokumenty/Studia/Data-mining/Animals-with-Attributes/'
+local_path = '../'
 feature_pattern = local_path + 'code/feat/%s-%s.pic.bz2'
 labels_pattern =  local_path + 'code/feat/%s-labels.pic.bz2'
 

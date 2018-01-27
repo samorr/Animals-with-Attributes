@@ -48,7 +48,7 @@ def trainAttribute(attributeId):
     data, labels = cd.createData(cd.train_classes, attributeId)
     trainData = cd.flattenDataSet(data)
     
-    svm = SVC(C=10., kernel=chi2_kernel, probability=True)
+    svm = SVC(C=10., kernel='rbf', probability=True)
     svm.fit(trainData, labels)
 
     filename = outputSVM_pattern % cd.attributenames[attributeId]

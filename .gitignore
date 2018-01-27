@@ -1,5 +1,7 @@
 #vscode files
 .vscode
 
+__pycache__
+
 # some code from papers
 platt.py

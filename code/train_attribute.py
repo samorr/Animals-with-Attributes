@@ -26,6 +26,7 @@ def bzPickle(obj,filename):
 
 outputSVM_pattern =  './results/%s-SVM.pic.bz2'
 outputLogReg_pattern =  './results/%s-LogReg.pic.bz2'
+outputLogRegCV_pattern =  './results/%s-LogRegCV.pic.bz2'
 
 gamma = np.ones(6)  
 
@@ -73,5 +74,5 @@ def trainLogRegCV(attributeId):
     logreg = LogisticRegressionCV(Cs=[0.01, 0.1, 1., 10., 100.], cv=5, dual=False, penalty='l2', solver='saga', refit=True)
     logreg.fit(trainData, labels)
 
-    filename = outputLogReg_pattern % cd.attributenames[attributeId]
+    filename = outputLogRegCV_pattern % cd.attributenames[attributeId]
     bzPickle(logreg, filename)

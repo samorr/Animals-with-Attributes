@@ -19,6 +19,11 @@ import collect_data as cd
 inputSVM_pattern =  './results/%s-SVM.pic.bz2'
 inputLogReg_pattern =  './results/%s-LogReg.pic.bz2'
 
+def testAllLogRegAccuracy():
+    scores = []
+    for i in range(85):
+        scores.append(testLogRegAccuracy(i))
+    return scores
 
 def testLogRegAccuracy(attributeId):
     dataSet, labels = cd.createData(cd.test_classes, attributeId)
@@ -26,6 +31,6 @@ def testLogRegAccuracy(attributeId):
 
     filename = inputLogReg_pattern % cd.attributenames[attributeId]
     logreg = cd.bzUnpickle(filename)
-
-    print('Score for logistic regression for attribute {1}:\n{2}', cd.attributenames[attributeId], logreg.score(data, labels))
-
+    score = logreg.score(data, labels)
+    print('Score for logistic regression for attribute {1}:\n{2}'.format(cd.attributenames[attributeId], score))
+    return score

@@ -12,7 +12,7 @@ Animals with Attributes Dataset, http://attributes.kyb.tuebingen.mpg.de
 
 import numpy as np
 from sklearn.svm import SVC
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LogisticRegression, LogisticRegressionCV
 from sklearn.metrics.pairwise import chi2_kernel
 import collect_data as cd
 
@@ -61,6 +61,16 @@ def trainLogReg(attributeId):
     trainData = cd.flattenDataSet(data)
     
     logreg = LogisticRegression('l2', C=10., solver='saga')
+    logreg.fit(trainData, labels)
+
+    filename = outputLogReg_pattern % cd.attributenames[attributeId]
+    bzPickle(logreg, filename)
+
+def trainLogRegCV(attributeId):
+    data, labels = cd.createData(cd.train_classes, attributeId)
+    trainData = cd.flattenDataSet(data)
+    
+    logreg = LogisticRegressionCV(Cs=[0.01, 0.1, 1., 10., 100.], cv=5, dual=False, penalty='l2', solver='saga', refit=True)
     logreg.fit(trainData, labels)
 
     filename = outputLogReg_pattern % cd.attributenames[attributeId]

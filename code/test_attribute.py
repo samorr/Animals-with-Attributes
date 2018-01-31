@@ -21,12 +21,12 @@ inputSVM_pattern =  './results/%s-SVM.pic.bz2'
 inputLogReg_pattern =  './results/%s-LogReg.pic.bz2'
 inputLogRegCV_pattern =  './results/%s-LogRegCV.pic.bz2'
 
-def testAllLogRegAccuracy():
+def testAllLogRegAccuracy(C):
     scores = []
     data, labels = cd.collectHistograms(cd.test_classes)
     labels = 2 * labels -1
     for i in range(85):
-        scores.append(testClassifier(data, labels[:,i], i, inputLogReg_pattern))
+        scores.append(testClassifier(data, labels[:,i], i, inputLogReg_pattern % (cd.attributenames[i], str(C))))
     return np.array(scores)
 
 def testAllLogRegCVAccuracy():
@@ -34,17 +34,17 @@ def testAllLogRegCVAccuracy():
     data, labels = cd.collectHistograms(cd.test_classes)
     labels = 2 * labels -1
     for i in range(85):
-        scores.append(testClassifier(data, labels[:,i], i, inputLogRegCV_pattern))
+        scores.append(testClassifier(data, labels[:,i], i, inputLogRegCV_pattern % cd.attributenames[i]))
     return np.array(scores)
 
-def testLogRegAccuracy(attributeId):
+def testLogRegAccuracy(attributeId, C):
     dataSet, labels = cd.createData(cd.test_classes, attributeId)
     data = cd.flattenDataSet(dataSet)
+    filename = inputLogReg_pattern % (cd.attributenames[attributeId], str(C))
 
-    return testClassifier(data, labels, attributeId, inputLogReg_pattern)
+    return testClassifier(data, labels, attributeId, filename)
 
-def testClassifier(data, labels, attributeId, input_pattern):
-    filename = input_pattern % cd.attributenames[attributeId]
+def testClassifier(data, labels, attributeId, filename):
     classifier = cd.bzUnpickle(filename)
     score = classifier.score(data, labels)
     print('Score for attribute {0}:\n{1}'.format(cd.attributenames[attributeId], score))
@@ -53,8 +53,9 @@ def testClassifier(data, labels, attributeId, input_pattern):
 def testLogRegCVAccuracy(attributeId):
     dataSet, labels = cd.createData(cd.test_classes, attributeId)
     data = cd.flattenDataSet(dataSet)
+    filename = inputLogRegCV_pattern % cd.attributenames[attributeId]
 
-    return testClassifier(data, labels, attributeId, inputLogRegCV_pattern)
+    return testClassifier(data, labels, attributeId, filename)
 
 def scoreClassifiers(input_pattern):
     attributeMatrix = (cd.attribute_matrix + 1.) / 2.

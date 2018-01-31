@@ -18,7 +18,7 @@ from sklearn.linear_model import LogisticRegression, LogisticRegressionCV
 import collect_data as cd
 
 inputSVM_pattern =  './results/%s-SVM.pic.bz2'
-inputLogReg_pattern =  './results/%s-LogReg.pic.bz2'
+inputLogReg_pattern =  './results/%s-LogReg-C=%s.pic.bz2'
 inputLogRegCV_pattern =  './results/%s-LogRegCV.pic.bz2'
 
 def testAllLogRegAccuracy(C):

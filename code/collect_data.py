@@ -77,4 +77,31 @@ def flattenDataSet(dataSet):
     data = np.concatenate([dataSet['cq'],dataSet['lss'],dataSet['phog'], dataSet['sift'], dataSet['surf'], dataSet['rgsift']], axis=1)
     return data
 
+def collectHistograms(all_classes):
+    featurehist = {}
+    for feature in all_features:
+        featurehist[feature] = []
+    
+    labels = []
+    for classname in all_classes:
+        for feature in all_features:
+            featurefilename = feature_pattern % (classname,feature)
+            print('# ',featurefilename)
+            histfile = bzUnpickle(featurefilename)
+            featurehist[feature].extend( histfile )
+
+        labelfilename = labels_pattern % classname
+        print('# ',labelfilename)
+        print('#')
+        labels.extend( bzUnpickle(labelfilename) )
+    
+    labels = (np.array(labels) + 1.) / 2.
+    for feature in all_features:
+        temp = np.array(featurehist[feature])
+        featurehist[feature] = (temp - temp.mean(axis=0)) / np.maximum(temp.std(axis=0),1)
+
+    for feature in all_features:
+        features_length[feature] = featurehist[feature].shape[1]
+
+    return flattenDataSet(featurehist), labels
 

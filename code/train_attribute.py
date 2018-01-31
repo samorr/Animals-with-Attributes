@@ -57,14 +57,14 @@ def trainSVM(attributeId):
     filename = outputSVM_pattern % cd.attributenames[attributeId]
     bzPickle(svm, filename)
     
-def trainLogReg(attributeId):
+def trainLogReg(attributeId, C):
     data, labels = cd.createData(cd.train_classes, attributeId)
     trainData = cd.flattenDataSet(data)
     
-    logreg = LogisticRegression('l2', C=10., solver='saga')
+    logreg = LogisticRegression('l2', C=C, solver='saga')
     logreg.fit(trainData, labels)
 
-    filename = outputLogReg_pattern % cd.attributenames[attributeId]
+    filename = 'C=' + C.astype(str) + outputLogReg_pattern % cd.attributenames[attributeId]
     bzPickle(logreg, filename)
 
 def trainLogRegCV(attributeId):

@@ -64,7 +64,7 @@ def trainLogReg(attributeId, C):
     logreg = LogisticRegression('l2', C=C, solver='saga')
     logreg.fit(trainData, labels)
 
-    filename = 'C=' + C.astype(str) + outputLogReg_pattern % cd.attributenames[attributeId]
+    filename = 'C=' + str(C) + outputLogReg_pattern % cd.attributenames[attributeId]
     bzPickle(logreg, filename)
 
 def trainLogRegCV(attributeId):

@@ -19,6 +19,7 @@ import collect_data as cd
 
 inputSVM_pattern =  './results/%s-SVM.pic.bz2'
 inputLogReg_pattern =  './results/%s-LogReg-C=%s.pic.bz2'
+inputLogReg_pattern_simple =  './results/%s-LogReg.pic.bz2'
 inputLogRegCV_pattern =  './results/%s-LogRegCV.pic.bz2'
 
 def testAllLogRegAccuracy(C):
@@ -57,12 +58,12 @@ def testLogRegCVAccuracy(attributeId):
 
     return testClassifier(data, labels, attributeId, filename)
 
-def scoreClassifiers(input_pattern):
+def scoreClassifiers(classes, input_pattern):
     attributeMatrix = (cd.attribute_matrix + 1.) / 2.
     attributesProb = np.sum(attributeMatrix, axis=0) / 50
     classProb = np.prod(np.abs(1 - attributesProb[np.newaxis,:] - attributeMatrix), axis=1)
 
-    data, labels = cd.collectHistograms(cd.test_classes)
+    data, labels = cd.collectHistograms(classes)
     classifiersProb = []
     for attributeId in range(85):
         filename = input_pattern % cd.attributenames[attributeId]
@@ -84,7 +85,7 @@ def scoreClassifiers(input_pattern):
     for testSample in range(data.shape[0]):
         classesPredProb = np.zeros(50)
         for clazz in range(50):
-            if cd.classnames[clazz] not in cd.test_classes:
+            if cd.classnames[clazz] not in classes:
                 continue
             prob = 1.
             for attr in range(85):

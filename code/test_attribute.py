@@ -62,6 +62,8 @@ def scoreClassifiers(classes, input_pattern):
     attributeMatrix = (cd.attribute_matrix + 1.) / 2.
     attributesProb = np.sum(attributeMatrix, axis=0) / 50
     classProb = np.prod(np.abs(1 - attributesProb[np.newaxis,:] - attributeMatrix), axis=1)
+    classProb = np.array([classProb[i] for i in range(50) if cd.classnames[i] in classes])
+    attributeMatrix = np.array([attributeMatrix[i,:] for i in range(50) if cd.classnames[i] in classes]).astype(np.int)
 
     data, labels = cd.collectHistograms(classes)
     classifiersProb = []
@@ -70,34 +72,26 @@ def scoreClassifiers(classes, input_pattern):
         classifier = cd.bzUnpickle(filename)
         classifiersProb.append(classifier.predict_proba(data))
     
-    tmp = labels.shape
     classifiersProb = np.array(classifiersProb)
     err = 0
     predicted = []
-    # for testSample in range(data.shape[0]):
-    #     # predictedClass = np.argmax(np.prod(classifiersProb[:,testSample,attributeMatrix.astype(np.int),np.newaxis], axis=0) / classProb)
-    #     attributeMatrix[predictedClass,:]
-    #     # print(predictedClass)
-    #     predicted.append(predictedClass)
-    #     if np.any(attributeMatrix[predictedClass,:] != labels[testSample,:]):
-    #         err += 1
 
     for testSample in range(data.shape[0]):
-        classesPredProb = np.zeros(50)
-        for clazz in range(50):
-            if cd.classnames[clazz] not in classes:
-                continue
-            prob = 1.
-            for attr in range(85):
-                prob *= classifiersProb[attr, testSample, attributeMatrix[clazz, attr].astype(np.int)]
-            prob /= classProb[clazz]
-            classesPredProb[clazz] = prob
-            # classesPredProb[clazz] = np.prod(classifiersProb[:,testSample, ], axis=0)
-        predictedClass = np.argmax(classesPredProb)
+        predictedClass = np.argmax(np.prod(classifiersProb[ :,np.newaxis, testSample, 0] *(1-attributeMatrix.T) + classifiersProb[ :, np.newaxis,testSample, 1] * attributeMatrix.T, axis=0) / classProb)
+
         predicted.append(predictedClass)
         if np.any(attributeMatrix[predictedClass,:] != labels[testSample,:]):
             err += 1
     err /= data.shape[0]
     print('Total average score: ', 1. - err)
-    return np.array(predicted)
-# p = scoreLogReg()
+    predicted = np.array(predicted)
+    return predicted, createConfusionMatrix(predicted, labels, attributeMatrix)
+
+def createConfusionMatrix(predicted, labels, attributeMatrix):
+    def whichClass(attributes):
+        return [i for i in range(attributeMatrix.shape[0]) if np.all(attributeMatrix[i,:] == attributes)][0]
+
+    confMatrix = np.zeros((attributeMatrix.shape[0], attributeMatrix.shape[0]))
+    for i in range(len(predicted)):
+        confMatrix[whichClass(attributeMatrix[predicted[i]]), whichClass(labels[i,:])] += 1
+    return confMatrix

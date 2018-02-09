@@ -52,13 +52,13 @@ def createData(all_classes, attribute_id):
     for classname in all_classes:
         for feature in all_features:
             featurefilename = feature_pattern % (classname,feature)
-            print('# ',featurefilename)
+            # print('# ',featurefilename)
             histfile = bzUnpickle(featurefilename)
             featurehist[feature].extend( histfile )
         
         labelfilename = labels_pattern % classname
-        print('# ',labelfilename)
-        print('#')
+        # print('# ',labelfilename)
+        # print('#')
         labels.extend( bzUnpickle(labelfilename)[:,attribute_id] )
     
     for feature in all_features:
@@ -86,13 +86,13 @@ def collectHistograms(all_classes):
     for classname in all_classes:
         for feature in all_features:
             featurefilename = feature_pattern % (classname,feature)
-            print('# ',featurefilename)
+            # print('# ',featurefilename)
             histfile = bzUnpickle(featurefilename)
             featurehist[feature].extend( histfile )
 
         labelfilename = labels_pattern % classname
-        print('# ',labelfilename)
-        print('#')
+        # print('# ',labelfilename)
+        # print('#')
         labels.extend( bzUnpickle(labelfilename) )
     
     labels = (np.array(labels) + 1.) / 2.

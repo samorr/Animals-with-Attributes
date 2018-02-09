@@ -2,6 +2,7 @@
 .vscode
 
 __pycache__
+*checkpoint*
 
 # some code from papers
 platt.py

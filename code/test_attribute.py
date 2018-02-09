@@ -22,12 +22,12 @@ inputLogReg_pattern =  './results/%s-LogReg-C=%s.pic.bz2'
 inputLogReg_pattern_simple =  './results/%s-LogReg.pic.bz2'
 inputLogRegCV_pattern =  './results/%s-LogRegCV.pic.bz2'
 
-def testAllLogRegAccuracy(C):
+def testAllLogRegAccuracy():
     scores = []
     data, labels = cd.collectHistograms(cd.test_classes)
     labels = 2 * labels -1
     for i in range(85):
-        scores.append(testClassifier(data, labels[:,i], i, inputLogReg_pattern % (cd.attributenames[i], str(C))))
+        scores.append(testClassifier(data, labels[:,i], i, inputLogReg_pattern_simple % cd.attributenames[i]))
     return np.array(scores)
 
 def testAllLogRegCVAccuracy():
@@ -94,4 +94,4 @@ def createConfusionMatrix(predicted, labels, attributeMatrix):
     confMatrix = np.zeros((attributeMatrix.shape[0], attributeMatrix.shape[0]))
     for i in range(len(predicted)):
         confMatrix[whichClass(attributeMatrix[predicted[i]]), whichClass(labels[i,:])] += 1
-    return confMatrix
+    return confMatrix.astype(np.int)

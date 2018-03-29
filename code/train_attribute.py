@@ -19,60 +19,41 @@ import collect_data as cd
 import _pickle as cPickle
 import bz2
 
-def bzPickle(obj,filename):
+def bz_pickle(obj,filename):
     f = bz2.BZ2File(filename, 'wb')
     cPickle.dump(obj, f)
     f.close()
 
-outputSVM_pattern =  './results/%s-SVM.pic.bz2'
-outputLogReg_pattern =  './results/%s-LogReg-C=%s.pic.bz2'
-outputLogRegCV_pattern =  './results/%s-LogRegCV.pic.bz2'
+OUTPUT_SVM_PATTERN =  './results/%s-SVM.pic.bz2'
+OUTPUT_LOG_REG_PATTERN =  './results/%s-LogReg-C=%s.pic.bz2'
+OUTPUT_LOG_REG_CV_PATTERN =  './results/%s-LogRegCV.pic.bz2'
 
-gamma = np.ones(6)  
-
-def statKernel(x1, x2):
-    cqKernel = chi2_kernel(x1[:cd.features_length['cq']], x2[:cd.features_length['cq']], gamma=gamma[0])
-
-    lssKernel = chi2_kernel(x1[cd.features_length['cq']:cd.features_length['lss']], x2[cd.features_length['cq']:cd.features_length['lss']], gamma=gamma[1])
-
-    phogKernel = chi2_kernel(x1[cd.features_length['lss']:cd.features_length['phog']], x2[cd.features_length['lss']:cd.features_length['phog']], gamma=gamma[2])
-
-    siftKernel = chi2_kernel(x1[cd.features_length['phog']:cd.features_length['sift']], x2[cd.features_length['phog']:cd.features_length['sift']], gamma=gamma[3])
-
-    surfKernel = chi2_kernel(x1[cd.features_length['sift']:cd.features_length['surf']], x2[cd.features_length['sift']:cd.features_length['surf']], gamma=gamma[4])
-
-    rgsiftKernel = chi2_kernel(x1[cd.features_length['surf']:cd.features_length['rgsift']], x2[cd.features_length['surf']:cd.features_length['rgsift']], gamma=gamma[5])
-
-    kernels = np.array([cqKernel, lssKernel, phogKernel, siftKernel, surfKernel, rgsiftKernel])
-
-    return np.sum(kernels)
-
-def trainSVM(attributeId):
-    data, labels = cd.createData(cd.train_classes, attributeId)
-    trainData = cd.flattenDataSet(data)
+def train_SVM(attribute_id):
+    data, labels = cd.create_data(cd.train_classes, attribute_id)
+    train_data = cd.flatten_data_set(data)
     
     svm = SVC(C=10., kernel='rbf', probability=True)
-    svm.fit(trainData, labels)
+    svm.fit(train_data, labels)
 
-    filename = outputSVM_pattern % cd.attributenames[attributeId]
-    bzPickle(svm, filename)
+    filename = OUTPUT_SVM_PATTERN % cd.attributenames[attribute_id]
+    bz_pickle(svm, filename)
     
-def trainLogReg(attributeId, C):
-    data, labels = cd.createData(cd.train_classes, attributeId)
-    trainData = cd.flattenDataSet(data)
+def train_logistic_regression(attribute_id, C):
+    data, labels = cd.create_data(cd.train_classes, attribute_id)
+    train_data = cd.flatten_data_set(data)
     
     logreg = LogisticRegression('l2', C=C, solver='saga')
-    logreg.fit(trainData, labels)
+    logreg.fit(train_data, labels)
 
-    filename = outputLogReg_pattern % (cd.attributenames[attributeId], str(C))
-    bzPickle(logreg, filename)
+    filename = OUTPUT_LOG_REG_PATTERN % (cd.attributenames[attribute_id], str(C))
+    bz_pickle(logreg, filename)
 
-def trainLogRegCV(attributeId):
-    data, labels = cd.createData(cd.train_classes, attributeId)
-    trainData = cd.flattenDataSet(data)
+def train_logistic_regression_CV(attribute_id):
+    data, labels = cd.create_data(cd.train_classes, attribute_id)
+    train_data = cd.flatten_data_set(data)
     
     logreg = LogisticRegressionCV(Cs=[0.01, 0.1, 1., 10., 100.], cv=5, dual=False, penalty='l2', solver='saga', refit=True)
-    logreg.fit(trainData, labels)
+    logreg.fit(train_data, labels)
 
-    filename = outputLogRegCV_pattern % cd.attributenames[attributeId]
-    bzPickle(logreg, filename)
+    filename = OUTPUT_LOG_REG_CV_PATTERN % cd.attributenames[attribute_id]
+    bz_pickle(logreg, filename)
